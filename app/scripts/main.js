@@ -63,8 +63,6 @@ var el = document.querySelector('#slider'),
         state.slideWidth = el.offsetWidth;        
         settings.slideHeight ? el.style.height = settings.slideHeight + sliderPadding + "px" : null;        
 
-        setInitialPositions();
-        markActives(true); // mark first slide as active when slider inits
         addNavHandlers(next, goToNext);
         addNavHandlers(prev, goToPrev);
         container.addEventListener('transitionend', updateAfterTrans); // option fire callback after each transition
@@ -97,18 +95,18 @@ var el = document.querySelector('#slider'),
             container.removeChild(container.firstChild);    
         }
 
-        console.log('slide width: ' + slideWidth);
-        console.log('container width: ' + containerWidth);
-        console.log('================\n');
+        // console.log('slide width: ' + slideWidth);
+        // console.log('container width: ' + containerWidth);
+        // console.log('================\n');
 
         
         var slidesPerGroup = Math.floor(containerWidth/slideWidth),
             groupCount = Math.ceil(slides.length/slidesPerGroup);
 
-        console.log('groupsCount: ' + groupCount);
-        console.log('================\n');
-        console.log('slidesPerGroup: ' + slidesPerGroup);
-        console.log('================\n');
+        // console.log('groupsCount: ' + groupCount);
+        // console.log('================\n');
+        // console.log('slidesPerGroup: ' + slidesPerGroup);
+        // console.log('================\n');
 
 
         for (var i = 0; i <= groupCount; i++) {
@@ -132,12 +130,9 @@ var el = document.querySelector('#slider'),
             container.appendChild(sets[i]);
         };
  
-
-        console.log(groupCount)
-
         state.current = 0;
         state.slideTotal = groupCount;
-        markActives(true);
+        markActives(false);
         setInitialPositions();
         traverse();
 
@@ -187,6 +182,7 @@ var el = document.querySelector('#slider'),
             });
 
             state.pagination = Array.prototype.slice.call(pager.querySelectorAll('.pagination__btn'));
+            markActives(true);
     }
 
     function goToSlide(e){
@@ -230,11 +226,10 @@ var el = document.querySelector('#slider'),
             elGroup = slides;
         }
 
-        !init &&  container.querySelector('.active') ? container.querySelector('.active').classList.remove('active') : null;
+        container.querySelector('.active') ? container.querySelector('.active').classList.remove('active') : null;
         elGroup[state.current].classList.add('active');
 
         if(state.pagination){
-
             pager.querySelector('.active') ? pager.querySelector('.active').classList.remove('active') : null;
             state.pagination[state.current].classList.add('active');
         }      
