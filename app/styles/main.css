@@ -49,7 +49,6 @@ img {
   -moz-transition: .75s ;
   -o-transition: .75s ;
   transition: .75s ;
-  transform: translate3d(0, 0, 0);
 }
 
 .slider .slide,
@@ -64,8 +63,18 @@ img {
   z-index: 1;
   text-align: center;
   background-color: white;
+  transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
+/* This is for non-dynamic containers - set the width of each slide */
+.slider .slide {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* This is for dynamic containers - set the width of each 'slag' slide */
 .slider .slag {
   position: relative;
   float: left;
@@ -81,8 +90,14 @@ img {
 }
 
 @media screen and (min-width: 850px) {
+  /* This is for dynamic containers - set the width of each 'slag' slide */
   .slider .slag {
     width: 29.33333%;
+  }
+
+  /* This is for non-dynamic containers - set the width of each slide */
+  .slider .slide {
+    width: 50%;
   }
 }
 
@@ -94,7 +109,7 @@ img {
 */
 .slider img {
   display: block;
-  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
 }
 

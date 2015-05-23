@@ -86,7 +86,11 @@ var el = document.querySelector('#slider'),
     function calculateDynamicContainers(){
 
         var slideWidth = slides[0].offsetWidth,
-            containerWidth = el.offsetWidth;
+            containerWidth = el.offsetWidth,
+            slidesPerGroup = Math.floor(containerWidth/slideWidth),
+            groupCount = Math.ceil(slides.length/slidesPerGroup),
+            docFrag = document.createDocumentFragment();
+
 
         sets = []; // empty sets before recalculation
 
@@ -99,9 +103,6 @@ var el = document.querySelector('#slider'),
         // console.log('container width: ' + containerWidth);
         // console.log('================\n');
 
-        
-        var slidesPerGroup = Math.floor(containerWidth/slideWidth),
-            groupCount = Math.ceil(slides.length/slidesPerGroup);
 
         // console.log('groupsCount: ' + groupCount);
         // console.log('================\n');
@@ -109,26 +110,24 @@ var el = document.querySelector('#slider'),
         // console.log('================\n');
 
 
-        for (var i = 0; i <= groupCount; i++) {
+        for (var i = 0; i < groupCount; i++) {
             var groupEl = document.createElement('div');
             groupEl.classList.add('slide-group');
-            sets.push(groupEl);
-        };
-
-        for (var i = 0; i < groupCount; i++) {
-            var end = slidesPerGroup*(i+1) > slides.length ? slides.length : slidesPerGroup*(i+1);
-            var start = i*slidesPerGroup > slides.length ? slide.length-1 : i*slidesPerGroup;
-            var slideChunk = slides.slice(start, end );
+            
+            var end = slidesPerGroup*(i+1) > slides.length ? slides.length : slidesPerGroup*(i+1),
+                start = i*slidesPerGroup > slides.length ? slides.length-1 : i*slidesPerGroup,
+                slideChunk = slides.slice(start, end );
 
             slideChunk.forEach(function(slide) {
-                sets[i].appendChild(slide);
+                groupEl.appendChild(slide);
             });
-            
-        }
 
-        for (var i = 0; i < groupCount; i++) {
-            container.appendChild(sets[i]);
-        };
+            sets.push(groupEl);
+
+            docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page reflows
+        };  
+
+        container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
  
         state.current = 0;
         state.slideTotal = groupCount;
