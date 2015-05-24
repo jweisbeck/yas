@@ -1,12 +1,17 @@
-##DON'T CARE ABOUT <IE9? DON'T NEED OODLES OF FEATURES?
+##DON'T CARE ABOUT NON-MODERN? DON'T NEED OODLES OF FEATURES?
 
-This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery and it only has two key features. I've slung my fair share of sliders, and in my experience, two features are the most important to making clients happy: pagination and dynamic sizing. This slider has those features, and nothing else. Oh, and we do have <IE9 covered. Users get shown the first image in the carousel as a static slide sans any carousel functionality.
+This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery (uses ES5 APIs) and it only has two main features. In my experience building sliders, the two most important features to making clients happy: pagination and dynamic sizing. This slider has those features, and nothing else.
+
+###Progressively Enhanced
+
+This project covers broswsers that don't support ES5 features like the classList API. Those browsers get shown the first item in the carousel as a static slide sans any carousel functionality (that's actually the default state of the slider with the full version enhanced from the basic state).
 
 
 ##TK
 
-* Multiple sliders per page: Put slider on prototype and instantiate a new instance when init() is called
-* Provide callback after slide is done animating. Useful for loading things like video.
-* Auto-play
-* swipe gestures for touch devices
+* Refactor: Multiple sliders per page: Put slider on prototype and instantiate a new instance when init() is called
+* Feature: Provide callback after slide is done animating. Useful for loading things like video.
+* Feature: Auto-play
+* Feature: swipe gestures for touch devices
+* Feature: Some facility to lazy load images, for perf.
 
