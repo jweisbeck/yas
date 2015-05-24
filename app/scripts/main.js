@@ -27,7 +27,8 @@ var el = document.querySelector('#slider'),
         sliderPadding: 0,
         dynamic: false,
         container: '.slides-wrapper'
-    }
+    };
+
 
     function init(opts) {
         
@@ -92,7 +93,7 @@ var el = document.querySelector('#slider'),
 
         sets = []; // empty sets before recalculation
 
-        //container.removeChild(container.firstChild); 
+        //first empty out slides
         while(container.firstChild){
             container.removeChild(container.firstChild);    
         }
@@ -122,7 +123,7 @@ var el = document.querySelector('#slider'),
 
             sets.push(groupEl);
 
-            docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page reflows
+            docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page re-paints
         };  
 
         container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
