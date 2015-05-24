@@ -1,91 +1,95 @@
 
 "use strict";
 
-var el = document.querySelector('#slider'),
-    container,
-    slides = Array.prototype.slice.call(el.querySelectorAll('.slide')),
-    sets = [],
-    slideImgs = Array.prototype.slice.call(el.querySelectorAll('.slide img')),
-    next = document.querySelector('#next'),
-    prev = document.querySelector('#prev'),
-    pager = null,
-    state = {
-        current: 0,
-        widthOffset: el.offsetWidth,
-        slideTotal: slides.length
-    },
-    settings = {
-        pagination: false,
-        sliderPadding: 0,
-        dynamic: false,
-        container: '.slides-wrapper'
-    };
+var Slider = function(){
+    this.el = document.querySelector('#slider');
+    this.container = null;
+    this.slides = Array.prototype.slice.call(this.el.querySelectorAll('.slide'));
+    this.sets = [];
+    this.slideImgs = Array.prototype.slice.call(this.el.querySelectorAll('.slide img'));
+    this.next = document.querySelector('#next');
+    this.prev = document.querySelector('#prev');
+    this.pager = null;
+    this.state = {
+            current: 0,
+            widthOffset: this.el.offsetWidth,
+            slideTotal: this.slides.length
+        };
+    this.settings = {
+            pagination: false,
+            sliderPadding: 0,
+            dynamic: false,
+            container: '.slides-wrapper'
+        };
 
+};
 
-    function init(opts) {
+Slider.prototype = {
+
+    init: function(opts) {
         
         // set up user options on settings
-        mergeOpts(opts);
+        this.mergeOpts(opts);
+        this.container = document.querySelector(this.settings.container);
 
-        container = document.querySelector(settings.container);
-
-        if(settings.dynamic){
-            settings.pagination = false
+        if(this.settings.dynamic){
+            this.settings.pagination = false
             // init process to calculate # of slide items to show per slide  
-            slides.forEach(function(slide) {
+            this.slides.forEach(function(slide) {
                 slide.classList.remove('slide');
                 slide.classList.add('slag');
             });
 
-            calculateDynamicContainers();
-            dynamicContainerEvents();
-            setInitialPositions();
+            this.calculateDynamicContainers();
+            this.dynamicContainerEvents();
+            this.setInitialPositions();
         } else {
-            setInitialPositions();
+            this.setInitialPositions();
         }
 
-        if(settings.pagination){
-            addPagination();
+        if(this.settings.pagination){
+            this.addPagination();
         }
 
-        addNavHandlers(next, goToNext);
-        addNavHandlers(prev, goToPrev);
-        container.addEventListener('transitionend', updateAfterTrans); // option fire callback after each transition
+        this.addNavHandlers(this.next, this.goToNext);
+        this.addNavHandlers(this.prev, this.goToPrev);
+        this.container.addEventListener('transitionend', this.updateAfterTrans); // option fire callback after each transition
 
         // if this is running, js obviously works, so remove no-js controls
         var nojs = document.querySelector('.nojs');
         nojs.classList.remove('nojs')
 
-    }
+    },
 
-    function setInitialPositions(){
-        state.widthOffset = el.offsetWidth; // set width for a single slide or single dynamic container       
+    setInitialPositions: function(){
+        var self = this;
+        this.state.widthOffset = this.el.offsetWidth; // set width for a single slide or single dynamic container       
 
         var elGroup;
-        if(settings.dynamic){
-            elGroup = sets;
+        if(this.settings.dynamic){
+            elGroup = this.sets;
         } else {
-            elGroup = slides;
+            elGroup = this.slides;
         }
 
         elGroup.forEach(function(slide, i) {
             // set up initial position of all the slides (ignore padding)
-            slide.style.left = state.widthOffset * i + "px";
+            slide.style.left = self.state.widthOffset * i + "px";
         });
-    }
+    },
 
-    function calculateDynamicContainers(){
-        var slideWidth = slides[0].offsetWidth,
-            containerWidth = el.offsetWidth,
+    calculateDynamicContainers: function(){
+        var slideWidth = this.slides[0].offsetWidth,
+            containerWidth = this.el.offsetWidth,
             slidesPerGroup = Math.floor(containerWidth/slideWidth),
-            groupCount = Math.ceil(slides.length/slidesPerGroup),
+            groupCount = Math.ceil(this.slides.length/slidesPerGroup),
             docFrag = document.createDocumentFragment();
 
 
-        sets = []; // empty sets before recalculation
+        this.sets = []; // empty sets before recalculation
 
         //first empty out slides
-        container.innerHTML = "";
+        this.container.innerHTML = "";
 
         // console.log('slide width: ' + slideWidth);
         // console.log('container width: ' + containerWidth);
@@ -102,59 +106,59 @@ var el = document.querySelector('#slider'),
             var groupEl = document.createElement('div');
             groupEl.classList.add('slide-group');
             
-            var end = slidesPerGroup*(i+1) > slides.length ? slides.length : slidesPerGroup*(i+1),
-                start = i*slidesPerGroup > slides.length ? slides.length-1 : i*slidesPerGroup,
-                slideChunk = slides.slice(start, end );
+            var end = slidesPerGroup*(i+1) > this.slides.length ? this.slides.length : slidesPerGroup*(i+1),
+                start = i*slidesPerGroup > this.slides.length ? this.slides.length-1 : i*slidesPerGroup,
+                slideChunk = this.slides.slice(start, end );
 
             slideChunk.forEach(function(slide) {
                 groupEl.appendChild(slide);
             });
 
-            sets.push(groupEl);
+            this.sets.push(groupEl);
 
             docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page re-paints
         };  
 
-        container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
+        this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
  
-        state.current = 0;
-        state.slideTotal = groupCount;
-        markActives(false);
-        setInitialPositions();
-        traverse();
+        this.state.current = 0;
+        this.state.slideTotal = groupCount;
+        this.markActives(false);
+        this.setInitialPositions();
+        this.traverse();
 
-    }
+    },
 
-    function dynamicContainerEvents(){
-        var timeout;
+    dynamicContainerEvents: function(){
+        var timeout, self = this;
         window.onresize = function(){
             clearTimeout(timeout);
             timeout = setTimeout( function(){
-                calculateDynamicContainers();
+                self.calculateDynamicContainers();
             }, 150);
         }
 
-    }
+    },
 
-    function addNavHandlers(el, fn) {
-        el.addEventListener('click', fn, false);
-    }
+    addNavHandlers: function(el, fn) {
+        el.addEventListener('click', fn.bind(this), false);
+    },
 
-    function updateAfterTrans(){
-        appendSlide();
-    }
+    updateAfterTrans: function(){
+        //this.appendSlide();
+    },
 
-    function addPagination(){
+    addPagination: function(){
         pager = document.querySelector('.pagination');
 
         if(!pager){
             pager = document.createElement('nav');
             pager.classList.add('pagination');
             //container.appendChild(pager);
-            el.parentNode.insertBefore(pager, el.nextSibiling);
+            this.el.parentNode.insertBefore(pager, el.nextSibiling);
         }
 
-            slides.forEach(function(slide, i) {
+            this.slides.forEach(function(slide, i) {
                 var btn = document.createElement('button');
                 btn.setAttribute('data-page', i);
                 btn.classList.add('pagination__btn');
@@ -164,88 +168,91 @@ var el = document.querySelector('#slider'),
                 pager.appendChild(btn);
             });
 
-            state.pagination = Array.prototype.slice.call(pager.querySelectorAll('.pagination__btn'));
-            markActives(true);
-    }
+            this.state.pagination = Array.prototype.slice.call(pager.querySelectorAll('.pagination__btn'));
+            this.markActives(true);
+    },
 
-    function goToSlide(e){
+    goToSlide: function(e){
         var target = e.target, 
             slide = target.getAttribute('data-page');
 
-        state.current = +slide;
+        this.state.current = +slide;
 
-        traverse();
-    }
+        this.traverse();
+    },
 
-    function goToNext(){
-        
-        state.current++;
+    goToNext: function(){
 
-        state.current = state.current >= state.slideTotal ? state.current = 0 : state.current;
+        this.state.current++;
 
-        traverse();
+        this.state.current = this.state.current >= this.state.slideTotal ? this.state.current = 0 : this.state.current;
 
-    }
+        this.traverse();
 
-    function goToPrev(){
+    },
 
-        state.current--;
-        state.current = state.current < 0 ? state.slideTotal-1 : state.current;
+    goToPrev: function(){
 
-        traverse();
+        this.state.current--;
+        this.state.current = this.state.current < 0 ? this.state.slideTotal-1 : this.state.current;
 
-    }
+        this.traverse();
 
-    function markActives(init){
+    },
+
+    markActives: function(init){
         var elGroup;
 
         // need to mark the right slides:
         // If we're in dynamic container mode, active needs to be set on the divs wrapping the slides
-        if(settings.dynamic && !init){
-            elGroup = sets;
+        if(this.settings.dynamic && !init){
+            elGroup = this.sets;
         } else {
             // Not in dynamic container mode, so apply active states to the slides themselves
-            elGroup = slides;
+            elGroup = this.slides;
         }
 
-        container.querySelector('.active') ? container.querySelector('.active').classList.remove('active') : null;
-        elGroup[state.current].classList.add('active');
+        this.container.querySelector('.active') ? this.container.querySelector('.active').classList.remove('active') : null;
+        elGroup[this.state.current].classList.add('active');
 
-        if(state.pagination){
-            pager.querySelector('.active') ? pager.querySelector('.active').classList.remove('active') : null;
-            state.pagination[state.current].classList.add('active');
+        if(this.state.pagination){
+            this.pager.querySelector('.active') ? this.pager.querySelector('.active').classList.remove('active') : null;
+            this.state.pagination[this.state.current].classList.add('active');
         }      
-    }
+    },
 
-    function traverse(){
-        transition(container, 'transform', 'translateX( ' + -(state.current*state.widthOffset) + 'px)');        
-    }
+    traverse: function(){
+        this.transition(this.container, 'transform', 'translateX( ' + -(this.state.current*this.state.widthOffset) + 'px)');        
+    },
 
     /// THIS TK
-    function appendSlide(){
+    appendSlide: function(){
         // after animation ends, re-position slide that was just moved off stage to end of slideshow, 
         // this is necessary to run an infinite loop-style animation
-    }
+    },
 
-    function transition(el, prop, value){
+    transition: function(el, prop, value){
         var vendors = ['-moz-','-webkit-','-o-','-ms-','-khtml-',''];
-        for(var i=0,l=vendors.length;i<l;i++) {
-            el.style[toCamelCase(vendors[i] + prop)] = value;
+        for(var i=0, l = vendors.length; i<l; i++) {
+            el.style[this.toCamelCase(vendors[i] + prop)] = value;
         }
-        markActives(false);
-    }
+        this.markActives(false);
+    },
 
-    function toCamelCase(str){
+    toCamelCase: function(str){
         return str.toLowerCase().replace(/(\-[a-z])/g, function($1){return $1.toUpperCase().replace('-','');});
-    };
+    },
 
-    function mergeOpts(opts){
-        for(var opt in settings ){
-            settings[opt] = opts[opt];
+    mergeOpts: function(opts){
+        for(var opt in this.settings ){
+            this.settings[opt] = opts[opt];
         };
     }
+};
 
-    init({
+
+    var slidy = new Slider();
+    slidy.init({
         pagination: true,
         dynamic: true,
         container: '.slides-wrap'
