@@ -75,7 +75,6 @@ var el = document.querySelector('#slider'),
     }
 
     function calculateDynamicContainers(){
-
         var slideWidth = slides[0].offsetWidth,
             containerWidth = el.offsetWidth,
             slidesPerGroup = Math.floor(containerWidth/slideWidth),
@@ -86,9 +85,7 @@ var el = document.querySelector('#slider'),
         sets = []; // empty sets before recalculation
 
         //first empty out slides
-        while(container.firstChild){
-            container.removeChild(container.firstChild);    
-        }
+        container.innerHTML = "";
 
         // console.log('slide width: ' + slideWidth);
         // console.log('container width: ' + containerWidth);
@@ -250,7 +247,7 @@ var el = document.querySelector('#slider'),
 
     init({
         pagination: true,
-        dynamic: false,
+        dynamic: true,
         container: '.slides-wrap'
     });
 
