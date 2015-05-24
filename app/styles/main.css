@@ -51,9 +51,22 @@ img {
   transition: .75s ;
 }
 
+/* no-js control: still show a single image */
+.nojs .slide {
+  display: none;
+}
+.nojs .slide:first-child {
+  display: block;
+  position: relative;
+  left: 0;
+}
+.nojs .nav,
+.nojs .pagination {
+  display: none;
+}
+
 .slider .slide,
 .slider .slide-group {
-  list-style: none;
   position: absolute;
   display: block;
   overflow: hidden;

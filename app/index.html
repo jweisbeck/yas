@@ -13,15 +13,18 @@
   <body>
   
 
-    <div class="slide-container">
+    <div class="slide-container nojs">
 
+      <!-- nav is required markup for slider to function -->
       <nav class="nav">
         <button id="prev">Previous</button>
         <button id="next">Next</button>
       </nav>
 
+      <!-- .slider is required. It's the root slider element that draws the 'frame' around the slider -->
       <div id="slider" class="slider">
 
+        <!-- .slides-wrap is required, but the selector can be set as an init option. The animation depends on this element -->
         <div class="slides-wrap">
           <div class="slide">
             <img src="http://loremflickr.com/450/300" alt="">

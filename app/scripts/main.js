@@ -19,19 +19,15 @@ var el = document.querySelector('#slider'),
     pager = null,
     state = {
         current: 0,
-        dir: 'next',
         widthOffset: el.offsetWidth,
-        slideTotal: slides.length,
-        isAnimating: false
+        slideTotal: slides.length
     },
     settings = {
         pagination: false,
-        slideHeight: null,
         sliderPadding: 0,
         dynamic: false,
-        container: ''
+        container: '.slides-wrapper'
     }
-
 
     function init(opts) {
         
@@ -59,17 +55,19 @@ var el = document.querySelector('#slider'),
             addPagination();
         }
 
-        // set the slide width (which can change as viewport resizes)
-        state.slideWidth = el.offsetWidth;        
-        settings.slideHeight ? el.style.height = settings.slideHeight + sliderPadding + "px" : null;        
-
         addNavHandlers(next, goToNext);
         addNavHandlers(prev, goToPrev);
         container.addEventListener('transitionend', updateAfterTrans); // option fire callback after each transition
 
+        // if this is running, js obviously works, so remove no-js controls
+        var nojs = document.querySelector('.nojs');
+        nojs.classList.remove('nojs')
+
     }
 
     function setInitialPositions(){
+        state.widthOffset = el.offsetWidth; // set width for a single slide or single dynamic container       
+
         var elGroup;
         if(settings.dynamic){
             elGroup = sets;
@@ -156,10 +154,6 @@ var el = document.querySelector('#slider'),
         appendSlide();
     }
 
-    function handleResize(){
-        var that = this;
-    }
-
     function addPagination(){
         pager = document.querySelector('.pagination');
 
@@ -194,7 +188,6 @@ var el = document.querySelector('#slider'),
     }
 
     function goToNext(){
-        state.dir = 'next';
         
         state.current++;
 
@@ -202,26 +195,26 @@ var el = document.querySelector('#slider'),
 
         traverse();
 
-        //console.log(state.current);
     }
 
     function goToPrev(){
-        state.dir = 'prev';
-        //console.log(state.current)
-        
+
         state.current--;
         state.current = state.current < 0 ? state.slideTotal-1 : state.current;
 
         traverse();
 
-        //console.log(state.current);
     }
 
     function markActives(init){
         var elGroup;
+
+        // need to mark the right slides:
+        // If we're in dynamic container mode, active needs to be set on the divs wrapping the slides
         if(settings.dynamic && !init){
             elGroup = sets;
         } else {
+            // Not in dynamic container mode, so apply active states to the slides themselves
             elGroup = slides;
         }
 
@@ -235,8 +228,7 @@ var el = document.querySelector('#slider'),
     }
 
     function traverse(){
-        transition(container, 'transform', 'translateX( ' + -(state.current*state.widthOffset) + 'px)');
-        markActives(false);
+        transition(container, 'transform', 'translateX( ' + -(state.current*state.widthOffset) + 'px)');        
     }
 
     /// THIS TK
@@ -250,6 +242,7 @@ var el = document.querySelector('#slider'),
         for(var i=0,l=vendors.length;i<l;i++) {
             el.style[toCamelCase(vendors[i] + prop)] = value;
         }
+        markActives(false);
     }
 
     function toCamelCase(str){
