@@ -1,6 +1,6 @@
-##DON'T CARE ABOUT NON-MODERN? DON'T NEED OODLES OF FEATURES?
+##DON'T CARE ABOUT NON-MODERN BROWSERS? DON'T NEED OODLES OF FEATURES?
 
-This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery (uses ES5 APIs) and it only has two main features. In my experience building sliders, the two most important features to making clients happy: pagination and dynamic sizing. This slider has those features, and nothing else.
+This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery (uses ES5 APIs) and it only has two main features. In my experience building sliders, the two most important features to making clients happy: pagination and dynamic container calculation. This slider has those features, and nothing else (it's responsive, too, but that's a baseline for everything nowadays, not a feature).
 
 ###Progressively Enhanced
 
