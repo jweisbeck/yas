@@ -7,6 +7,8 @@ This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQue
 This project covers broswsers that don't support ES5 features like the classList API. Those browsers get shown the first item in the carousel as a static slide sans any carousel functionality (that's actually the default state of the slider with the full version enhanced from the basic state).
 
 
+
+
 ##TK
 
 * Refactor: Multiple sliders per page: Put slider on prototype and instantiate a new instance when init() is called

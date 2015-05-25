@@ -6,7 +6,6 @@ var Slider = function(){
     this.container = null;
     this.slides = Array.prototype.slice.call(this.el.querySelectorAll('.slide'));
     this.sets = [];
-    this.slideImgs = Array.prototype.slice.call(this.el.querySelectorAll('.slide img'));
     this.next = document.querySelector('#next');
     this.prev = document.querySelector('#prev');
     this.pager = null;
@@ -32,6 +31,23 @@ Slider.prototype = {
         this.mergeOpts(opts);
         this.container = document.querySelector(this.settings.container);
 
+        this.loadImages(this.configureSlides.bind(this));
+
+        if(this.settings.pagination){
+            this.addPagination();
+        }
+
+        this.addNavHandlers(this.next, this.goToNext);
+        this.addNavHandlers(this.prev, this.goToPrev);
+        this.container.addEventListener('transitionend', this.updateAfterTrans); // option fire callback after each transition
+
+        // if this is running, js obviously works, so remove no-js controls and swap in 2 through n slides
+        var nojs = document.querySelector('.nojs');
+        nojs.classList.remove('nojs')
+
+    },
+
+    configureSlides: function() {
         if(this.settings.dynamic){
             this.settings.pagination = false
             // init process to calculate # of slide items to show per slide  
@@ -46,18 +62,45 @@ Slider.prototype = {
         } else {
             this.setInitialPositions();
         }
+    },
 
-        if(this.settings.pagination){
-            this.addPagination();
+    loadImages: function(fn) {
+        var targets = Array.prototype.slice.call(this.container.querySelectorAll('.js-load')),
+            imgs = [],
+            frag = document.createDocumentFragment();
+
+        if(targets.length){
+            targets.forEach(function(img, i) {
+                var src = img.getAttribute('data-src');
+                var img = document.createElement('img');
+                img.setAttribute('src', src);
+                img.setAttribute('data-slide', i);
+                imgs.push(img);
+            });
+
+            this.container.innerHTML = "";
+
+            for (var i = 0; i < this.slides.length; i++) {
+                if( i < imgs.length) {
+                this.slides[i+1].appendChild(imgs[i]);
+                console.log(this.slides[i])
+                frag.appendChild(this.slides[i]);
+            }
+        };
+            /*
+            this.slides.forEach(function(slide, i) {
+            
+                    // skip this first image, as it should always directly use a source image
+                    slide.appendChild(imgs[i]);
+                    frag.appendChild(slide);
+            });
+*/
+
+            this.container.appendChild(frag);
+
         }
 
-        this.addNavHandlers(this.next, this.goToNext);
-        this.addNavHandlers(this.prev, this.goToPrev);
-        this.container.addEventListener('transitionend', this.updateAfterTrans); // option fire callback after each transition
-
-        // if this is running, js obviously works, so remove no-js controls
-        var nojs = document.querySelector('.nojs');
-        nojs.classList.remove('nojs')
+        fn();
 
     },
 
@@ -120,12 +163,13 @@ Slider.prototype = {
         };  
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
- 
+    
         this.state.current = 0;
         this.state.slideTotal = groupCount;
         this.markActives(false);
         this.setInitialPositions();
         this.traverse();
+
 
     },
 

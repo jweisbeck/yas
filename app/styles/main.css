@@ -94,6 +94,7 @@ img {
   margin: 0 2%;
   overflow: hidden;
   left: 0;
+  width: 100%;
 }
 
 @media screen and (min-width: 400px) {
