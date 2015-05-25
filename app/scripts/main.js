@@ -18,7 +18,9 @@ var Slider = function(){
             pagination: false,
             sliderPadding: 0,
             dynamic: false,
-            container: '.slides-wrapper'
+            container: '.slides-wrapper',
+            autoplay: false,
+            interval: 2000
         };
 
 };
@@ -37,14 +39,24 @@ Slider.prototype = {
             this.addPagination();
         }
 
+        if(this.settings.autoplay){
+            this.autoplay();
+        }
+
         this.addNavHandlers(this.next, this.goToNext);
         this.addNavHandlers(this.prev, this.goToPrev);
-        this.container.addEventListener('transitionend', this.updateAfterTrans); // option fire callback after each transition
+        this.container.addEventListener('transitionend', this.updateAfterTrans); // (TK - need to add vendor API variations). Option fire callback after each transition
 
-        // if this is running, js obviously works, so remove no-js controls and swap in 2 through n slides
+        // if this is running, js obviously works, so remove no-js controls and swap in 2 through n slide images if present
         var nojs = document.querySelector('.nojs');
         nojs.classList.remove('nojs')
+    },
 
+    autoplay: function() {
+        var self = this;
+        setInterval(function(){
+            self.goToNext();
+        }, this.settings.interval)
     },
 
     configureSlides: function() {
@@ -81,27 +93,19 @@ Slider.prototype = {
             this.container.innerHTML = "";
 
             for (var i = 0; i < this.slides.length; i++) {
-                if( i < imgs.length) {
-                this.slides[i+1].appendChild(imgs[i]);
-                console.log(this.slides[i])
-                frag.appendChild(this.slides[i]);
+                if(i == 0 ){
+                    // skip first slide, which should always be referenced in an <img> to fulfill failed PE qualification test
+                    frag.appendChild(this.slides[i]);
+                } else {
+                    this.slides[i].appendChild(imgs[i-1]);
+                    frag.appendChild(this.slides[i]);
+                }
             }
-        };
-            /*
-            this.slides.forEach(function(slide, i) {
-            
-                    // skip this first image, as it should always directly use a source image
-                    slide.appendChild(imgs[i]);
-                    frag.appendChild(slide);
-            });
-*/
-
+           
             this.container.appendChild(frag);
-
         }
 
         fn();
-
     },
 
     setInitialPositions: function(){
@@ -169,8 +173,6 @@ Slider.prototype = {
         this.markActives(false);
         this.setInitialPositions();
         this.traverse();
-
-
     },
 
     dynamicContainerEvents: function(){
@@ -181,25 +183,21 @@ Slider.prototype = {
                 self.calculateDynamicContainers();
             }, 150);
         }
-
     },
 
     addNavHandlers: function(el, fn) {
         el.addEventListener('click', fn.bind(this), false);
     },
 
-    updateAfterTrans: function(){
-        //this.appendSlide();
-    },
-
     addPagination: function(){
-        pager = document.querySelector('.pagination');
+        var self = this;
+        this.pager = document.querySelector('.pagination');
 
-        if(!pager){
-            pager = document.createElement('nav');
-            pager.classList.add('pagination');
+        if(!this.pager){
+            this.pager = document.createElement('nav');
+            this.pager.classList.add('pagination');
             //container.appendChild(pager);
-            this.el.parentNode.insertBefore(pager, el.nextSibiling);
+            this.el.parentNode.insertBefore(this.pager, this.el.nextSibiling);
         }
 
             this.slides.forEach(function(slide, i) {
@@ -208,11 +206,11 @@ Slider.prototype = {
                 btn.classList.add('pagination__btn');
                 var txt = document.createTextNode(i+1);
                 btn.appendChild(txt);
-                btn.addEventListener('click', goToSlide, false);
-                pager.appendChild(btn);
+                btn.addEventListener('click', self.goToSlide.bind(self), false);
+                self.pager.appendChild(btn);
             });
 
-            this.state.pagination = Array.prototype.slice.call(pager.querySelectorAll('.pagination__btn'));
+            this.state.pagination = Array.prototype.slice.call(this.pager.querySelectorAll('.pagination__btn'));
             this.markActives(true);
     },
 
@@ -220,7 +218,7 @@ Slider.prototype = {
         var target = e.target, 
             slide = target.getAttribute('data-page');
 
-        this.state.current = +slide;
+        this.state.current = this.state.current >= this.state.slideTotal ? this.state.current = 0 : +slide;
 
         this.traverse();
     },
@@ -277,9 +275,11 @@ Slider.prototype = {
 
     transition: function(el, prop, value){
         var vendors = ['-moz-','-webkit-','-o-','-ms-','-khtml-',''];
+        
         for(var i=0, l = vendors.length; i<l; i++) {
             el.style[this.toCamelCase(vendors[i] + prop)] = value;
         }
+
         this.markActives(false);
     },
 
@@ -299,7 +299,9 @@ Slider.prototype = {
     slidy.init({
         pagination: true,
         dynamic: true,
-        container: '.slides-wrap'
+        container: '.slides-wrap',
+        autoplay: true,
+        interval: 5000 // for autoplay true only
     });
 
 
