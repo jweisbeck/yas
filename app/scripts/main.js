@@ -53,10 +53,11 @@ Slider.prototype = {
     },
 
     autoplay: function() {
+        console.log(this.settings)
         var self = this;
         setInterval(function(){
             self.goToNext();
-        }, this.settings.interval)
+        }, 2000)
     },
 
     configureSlides: function() {
@@ -174,14 +175,13 @@ Slider.prototype = {
         };  
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
-        
+
         var slideDelta = this.state.slideTotal - groupCount;
 
         if(this.state.slideTotal == this.state.current+1){
             this.state.current = groupCount-1;
         }
 
-        //this.state.current = this.state.slideTotal == this.state.current+1 ? groupCount-1 : this.state.current+1;
         this.state.slideTotal = groupCount;
 
         this.markActives(false);
@@ -317,7 +317,7 @@ Slider.prototype = {
 
     mergeOpts: function(opts){
         for(var opt in this.settings ){
-            this.settings[opt] = opts[opt];
+            this.settings[opt] = opts[opt] ? opts[opt] : this.settings[opt];
         };
     }
 };
@@ -327,8 +327,8 @@ Slider.prototype = {
     slidy.init({
         pagination: true,
         dynamic: true,
-        container: '.slides-wrap'
-        //autoplay: true,
+        container: '.slides-wrap',
+        autoplay: true
         //interval: 5000 // for autoplay true only
     });
 
