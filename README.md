@@ -2,9 +2,14 @@
 
 This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery (uses ES5 APIs) and it only has two main features. In my experience building sliders, the two most important features to making clients happy: pagination and dynamic container calculation. This slider has those features, and nothing else (it's responsive, too, but that's a baseline for everything nowadays, not a feature).
 
+This script is just 1.5kb minified and gzipped. There is no library dependency, it's a TRUE 1.5kb gzipped & minified, ~2.67kb minified without gzip.
+
 ###Progressively Enhanced
 
 This project covers broswsers that don't support ES5 features like the classList API. Those browsers get shown the first item in the carousel as a static slide sans any carousel functionality (that's actually the default state of the slider with the full version enhanced from the basic state).
+
+####Progressive Enhancement workflow
+TK
 
 
 

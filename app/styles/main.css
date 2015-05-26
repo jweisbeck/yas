@@ -16,10 +16,11 @@ img {
 }
 
 .slider {
-  margin-top: 1em;
-  padding: 0;
+  margin: 0 auto;
+  width: 100%;
   overflow: hidden;
-  background-color: white;
+  position: relative;
+  border: 1px solid pink;
 }
 
 .slider:after,
@@ -45,10 +46,17 @@ img {
   position: relative;
   margin: 10px auto 0;
   max-width: 100%;
-  -webkit-transition: .75s ;
-  -moz-transition: .75s ;
-  -o-transition: .75s ;
-  transition: .75s ;
+  -webkit-transition: all .75s ease-in-out;
+  -moz-transition: all .75s ease-in-out;
+  -o-transition: all .75s ease-in-out;
+  transition: all .75s ease-in-out;
+}
+
+.slider .slides-wrap.no-anim {
+   -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none; 
 }
 
 /* no-js control: still show a single image */
@@ -111,7 +119,7 @@ img {
 
   /* This is for non-dynamic containers - set the width of each slide */
   .slider .slide {
-    width: 50%;
+    width: 100%;
   }
 }
 
@@ -123,7 +131,7 @@ img {
 */
 .slider img {
   display: block;
-  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
 }
 

@@ -60,6 +60,7 @@ Slider.prototype = {
     },
 
     configureSlides: function() {
+
         if(this.settings.dynamic){
             this.settings.pagination = false
             // init process to calculate # of slide items to show per slide  
@@ -69,10 +70,11 @@ Slider.prototype = {
             });
 
             this.calculateDynamicContainers();
-            this.dynamicContainerEvents();
+            this.onResize(this.calculateDynamicContainers);
             this.setInitialPositions();
         } else {
             this.setInitialPositions();
+            this.onResize(this.setInitialPositions);
         }
     },
 
@@ -108,7 +110,7 @@ Slider.prototype = {
         fn();
     },
 
-    setInitialPositions: function(){
+    setInitialPositions: function(resize){
         var self = this;
         this.state.widthOffset = this.el.offsetWidth; // set width for a single slide or single dynamic container       
 
@@ -123,6 +125,8 @@ Slider.prototype = {
             // set up initial position of all the slides (ignore padding)
             slide.style.left = self.state.widthOffset * i + "px";
         });
+
+        this.traverse(resize);
     },
 
     calculateDynamicContainers: function(){
@@ -171,17 +175,16 @@ Slider.prototype = {
         this.state.current = 0;
         this.state.slideTotal = groupCount;
         this.markActives(false);
-        this.setInitialPositions();
-        this.traverse();
+        this.setInitialPositions(true);
     },
 
-    dynamicContainerEvents: function(){
+    onResize: function(fn, time) {
         var timeout, self = this;
         window.onresize = function(){
             clearTimeout(timeout);
             timeout = setTimeout( function(){
-                self.calculateDynamicContainers();
-            }, 150);
+                fn.call(self, true);
+            }, time || 150);
         }
     },
 
@@ -263,8 +266,15 @@ Slider.prototype = {
         }      
     },
 
-    traverse: function(){
-        this.transition(this.container, 'transform', 'translateX( ' + -(this.state.current*this.state.widthOffset) + 'px)');        
+    traverse: function(resize){
+        if(resize === true){
+            this.container.classList.add('no-anim');
+        } else {
+            this.container.classList.remove('no-anim');
+        }
+
+        //this.transition(this.container, 'transition', 'none');
+        this.transition(this.container, 'transform', 'translateX( ' + -(this.state.current*this.state.widthOffset) + 'px)');                
     },
 
     /// THIS TK
@@ -299,9 +309,9 @@ Slider.prototype = {
     slidy.init({
         pagination: true,
         dynamic: true,
-        container: '.slides-wrap',
-        autoplay: true,
-        interval: 5000 // for autoplay true only
+        container: '.slides-wrap'
+        //autoplay: true,
+        //interval: 5000 // for autoplay true only
     });
 
 
