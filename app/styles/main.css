@@ -17,7 +17,7 @@ img {
 
 .slider {
   margin: 0 auto;
-  width: 100%;
+  width: 75%;
   overflow: hidden;
   position: relative;
   border: 1px solid pink;

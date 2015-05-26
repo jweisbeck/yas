@@ -71,10 +71,10 @@ Slider.prototype = {
 
             this.calculateDynamicContainers();
             this.onResize(this.calculateDynamicContainers);
-            this.setInitialPositions();
+            this.recalcSlidePositions();
         } else {
-            this.setInitialPositions();
-            this.onResize(this.setInitialPositions);
+            this.recalcSlidePositions(true);
+            this.onResize(this.recalcSlidePositions);
         }
     },
 
@@ -110,7 +110,10 @@ Slider.prototype = {
         fn();
     },
 
-    setInitialPositions: function(resize){
+    recalcSlidePositions: function(resize){
+        // on browser resize, we need to recalculate the slide's left position so they are correctly spaced amongst themselves,
+        // or weird margin and overlapping will begin to occur. This ensures the slides stay 'synced' to the size of their parent 
+        // container, which SHOULD be a percentage of viewport width bc it's a responsive design, right?
         var self = this;
         this.state.widthOffset = this.el.offsetWidth; // set width for a single slide or single dynamic container       
 
@@ -175,7 +178,7 @@ Slider.prototype = {
         this.state.current = this.state.current >= groupCount ? groupCount-1 : this.state.current;
         this.state.slideTotal = groupCount;
         this.markActives(false);
-        this.setInitialPositions(true);
+        this.recalcSlidePositions(true);
     },
 
     onResize: function(fn, time) {
@@ -268,8 +271,12 @@ Slider.prototype = {
 
     traverse: function(resize){
         if(resize === true){
+            // if the traverse is happening because of a browser resize, we don't want the animation to happen
+            // it looks bad and is probably distracting to the user. So we apply a class that 'turns off' the 
+            // transition animations while we're in a resize event.
             this.container.classList.add('no-anim');
         } else {
+            // Otherwise, traverse is running as a result of a user event, in which case we definitely want the animation to happen
             this.container.classList.remove('no-anim');
         }
 
