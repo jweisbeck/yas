@@ -172,7 +172,7 @@ Slider.prototype = {
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
     
-        this.state.current = 0;
+        this.state.current = this.state.current >= groupCount ? groupCount-1 : this.state.current;
         this.state.slideTotal = groupCount;
         this.markActives(false);
         this.setInitialPositions(true);
