@@ -12,19 +12,20 @@
 
     <div class="slide-container nojs">
 
-      <!-- nav is required markup for slider to function -->
+      <!-- nav is optional. Use this base markup. Just delete this markup to remove navigation. -->
       <div class="nav">
         <button id="prev">Previous</button>
         <button id="next">Next</button>
       </div>
 
-      <!-- .slider is required. It's the root slider element that draws the 'frame' around the slider -->
+      <!-- #slider is required. It's the root slider element that all selections are based upon -->
       <div id="slider" class="slider">
 
         <!-- .slides-wrap is required, but the selector can be set as an init option. The animation depends on this element -->
         <div class="slides-wrap">
+
           <div class="slide">
-            <!-- First slide must always have content & not lazy load to fulfill PE qualification requirements -->
+            <!-- If your slider has images, the first slide must always load the image directly fulfill PE qualification requirements -->
             <img src="http://lorempixel.com/450/299/" alt="">
             <p class="caption">This is a caption. A caption it is. A very fine caption it is, indeed!</p>             
           </div>

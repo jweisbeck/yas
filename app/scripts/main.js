@@ -17,8 +17,8 @@ var Slider = function(){
     this.settings = {
             pagination: false,
             sliderPadding: 0,
-            dynamic: false,
-            container: '.slides-wrapper',
+            dynamic: true,
+            container: '.slides-wrap',
             autoplay: false,
             interval: 2000,
             animation: true
@@ -45,8 +45,8 @@ Slider.prototype = {
         
         this.loadImages(this.configureSlides.bind(this));
 
-        this.addNavHandlers(this.next, this.goToNext);
-        this.addNavHandlers(this.prev, this.goToPrev);
+        if(this.next) this.addNavHandlers(this.next, this.goToNext);
+        if(this.prev) this.addNavHandlers(this.prev, this.goToPrev);
       
         this.container.addEventListener('transitionend', this.updateAfterTrans); // (TK - need to add vendor API variations). Option fire callback after each transition
 
@@ -148,17 +148,6 @@ Slider.prototype = {
         //first empty out slides
         this.container.innerHTML = "";
 
-        // console.log('slide width: ' + slideWidth);
-        // console.log('container width: ' + containerWidth);
-        // console.log('================\n');
-
-
-        // console.log('groupsCount: ' + groupCount);
-        // console.log('================\n');
-        // console.log('slidesPerGroup: ' + slidesPerGroup);
-        // console.log('================\n');
-
-
         for (var i = 0; i < groupCount; i++) {
             var groupEl = document.createElement('div');
             groupEl.classList.add('slide-group');
@@ -177,8 +166,6 @@ Slider.prototype = {
         };  
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
-
-        var slideDelta = this.state.slideTotal - groupCount;
 
         if(this.state.slideTotal == this.state.current+1){
             this.state.current = groupCount-1;
@@ -247,22 +234,15 @@ Slider.prototype = {
     },
 
     goToNext: function(){
-
         this.state.current++;
-
         this.state.current = this.state.current >= this.state.slideTotal ? this.state.current = 0 : this.state.current;
-
         this.traverse();
-
     },
 
     goToPrev: function(){
-
         this.state.current--;
         this.state.current = this.state.current < 0 ? this.state.slideTotal-1 : this.state.current;
-
         this.traverse();
-
     },
 
     markActives: function(init){
@@ -277,9 +257,11 @@ Slider.prototype = {
             elGroup = this.slides;
         }
 
+        // remove any active class if it exists and apply .active to the current slide element
         this.container.querySelector('.active') ? this.container.querySelector('.active').classList.remove('active') : null;
         elGroup[this.state.current].classList.add('active');
 
+        // update the paginator's active element
         if(this.state.pagination){
             this.pager.querySelector('.active') ? this.pager.querySelector('.active').classList.remove('active') : null;
             this.state.pagination[this.state.current].classList.add('active');
@@ -323,23 +305,19 @@ Slider.prototype = {
     },
 
     mergeOpts: function(opts){
-        for(var opt in this.settings ){
-            this.settings[opt] = opts[opt] === undefined ? this.settings[opt] : opts[opt];
-        };
+        if(opts){
+            for(var opt in this.settings ){
+                this.settings[opt] = opts[opt] === undefined ? this.settings[opt] : opts[opt];
+            };
+        }
 
     }
 };
 
+// Optionally do `module.exports = Slider;` here, for CommonJS compat
 
-    var slidy = new Slider();
-    slidy.init({
-        pagination: true,
-        dynamic: true,
-        container: '.slides-wrap',
-        autoplay: true // default is false 
-        //animation: false // default is true
-        //interval: 5000 // for autoplay true only
-    });
+var slidy = new Slider();
+slidy.init();
 
 
 
