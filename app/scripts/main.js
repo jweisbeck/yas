@@ -56,7 +56,6 @@ Slider.prototype = {
     },
 
     autoplay: function() {
-        console.log(this.settings)
         var self = this;
         setInterval(function(){
             self.goToNext();
@@ -187,6 +186,9 @@ Slider.prototype = {
 
         this.state.slideTotal = groupCount;
         this.recalcSlidePositions(true);
+        if(this.settings.pagination){
+            this.addPagination(true); // need to re-add pagination with the correct number of slides
+        }
     },
 
     onResize: function(fn, time) {
@@ -203,29 +205,36 @@ Slider.prototype = {
         el.addEventListener('click', fn.bind(this), false);
     },
 
-    addPagination: function(){
+    addPagination: function(isRecalculation){
         var self = this;
 
         this.pager = this.pager || this.el.querySelector('.pagination');
 
+        if(this.pager && isRecalculation){
+            this.pager.innerHTML = ""; // using innerHTML bc is also safely removes event listeners, I think :)
+            this.pager = null;
+        }
+
         if(!this.pager){
             this.pager = document.createElement('nav');
             this.pager.classList.add('pagination');
-            //container.appendChild(pager);
             this.el.parentNode.insertBefore(this.pager, this.el.nextSibiling);
         }
 
-            this.slides.forEach(function(slide, i) {
+            for (var i = 0; i < this.state.slideTotal; i++) {
+
                 var btn = document.createElement('button');
                 btn.setAttribute('data-page', i);
                 btn.classList.add('pagination__btn');
                 var txt = document.createTextNode(i+1);
                 btn.appendChild(txt);
                 btn.addEventListener('click', self.goToSlide.bind(self), false);
-                self.pager.appendChild(btn);
-            });
+                self.pager.appendChild(btn);                
+            };
 
             this.state.pagination = Array.prototype.slice.call(this.pager.querySelectorAll('.pagination__btn'));
+
+        if(isRecalculation) this.markActives();
     },
 
     goToSlide: function(e){
@@ -326,8 +335,8 @@ Slider.prototype = {
     slidy.init({
         pagination: true,
         dynamic: true,
-        container: '.slides-wrap'
-        //autoplay: true // default is false 
+        container: '.slides-wrap',
+        autoplay: true // default is false 
         //animation: false // default is true
         //interval: 5000 // for autoplay true only
     });
