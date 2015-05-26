@@ -20,7 +20,8 @@ var Slider = function(){
             dynamic: false,
             container: '.slides-wrapper',
             autoplay: false,
-            interval: 2000
+            interval: 2000,
+            animation: true
         };
 
 };
@@ -31,9 +32,8 @@ Slider.prototype = {
         
         // set up user options on settings
         this.mergeOpts(opts);
-        this.container = document.querySelector(this.settings.container);
 
-        this.loadImages(this.configureSlides.bind(this));
+        this.container = document.querySelector(this.settings.container);
 
         if(this.settings.pagination){
             this.addPagination();
@@ -42,14 +42,17 @@ Slider.prototype = {
         if(this.settings.autoplay){
             this.autoplay();
         }
+        
+        this.loadImages(this.configureSlides.bind(this));
 
         this.addNavHandlers(this.next, this.goToNext);
         this.addNavHandlers(this.prev, this.goToPrev);
+      
         this.container.addEventListener('transitionend', this.updateAfterTrans); // (TK - need to add vendor API variations). Option fire callback after each transition
 
         // if this is running, js obviously works, so remove no-js controls and swap in 2 through n slide images if present
         var nojs = document.querySelector('.nojs');
-        nojs.classList.remove('nojs')
+        nojs.classList.remove('nojs');
     },
 
     autoplay: function() {
@@ -63,7 +66,7 @@ Slider.prototype = {
     configureSlides: function() {
 
         if(this.settings.dynamic){
-            this.settings.pagination = false
+           
             // init process to calculate # of slide items to show per slide  
             this.slides.forEach(function(slide) {
                 slide.classList.remove('slide');
@@ -72,11 +75,11 @@ Slider.prototype = {
 
             this.calculateDynamicContainers();
             this.onResize(this.calculateDynamicContainers);
-            this.recalcSlidePositions();
         } else {
-            this.recalcSlidePositions(true);
             this.onResize(this.recalcSlidePositions);
         }
+
+        this.recalcSlidePositions();
     },
 
     loadImages: function(fn) {
@@ -111,7 +114,7 @@ Slider.prototype = {
         fn();
     },
 
-    recalcSlidePositions: function(resize){
+    recalcSlidePositions: function(){
         // on browser resize, we need to recalculate the slide's left position so they are correctly spaced amongst themselves,
         // or weird margin and overlapping will begin to occur. This ensures the slides stay 'synced' to the size of their parent 
         // container, which SHOULD be a percentage of viewport width bc it's a responsive design, right?
@@ -130,7 +133,7 @@ Slider.prototype = {
             slide.style.left = self.state.widthOffset * i + "px";
         });
 
-        this.traverse(resize);
+        this.traverse(true);
     },
 
     calculateDynamicContainers: function(){
@@ -183,13 +186,7 @@ Slider.prototype = {
         }
 
         this.state.slideTotal = groupCount;
-
-        this.markActives(false);
         this.recalcSlidePositions(true);
-
-
-        console.log('AFTER state.current: ' + this.state.current);
-        console.log('AFTER slideTotal: ' + this.state.slideTotal);
     },
 
     onResize: function(fn, time) {
@@ -208,7 +205,8 @@ Slider.prototype = {
 
     addPagination: function(){
         var self = this;
-        this.pager = document.querySelector('.pagination');
+
+        this.pager = this.pager || this.el.querySelector('.pagination');
 
         if(!this.pager){
             this.pager = document.createElement('nav');
@@ -228,7 +226,6 @@ Slider.prototype = {
             });
 
             this.state.pagination = Array.prototype.slice.call(this.pager.querySelectorAll('.pagination__btn'));
-            this.markActives(true);
     },
 
     goToSlide: function(e){
@@ -264,7 +261,7 @@ Slider.prototype = {
 
         // need to mark the right slides:
         // If we're in dynamic container mode, active needs to be set on the divs wrapping the slides
-        if(this.settings.dynamic && !init){
+        if(this.settings.dynamic){
             elGroup = this.sets;
         } else {
             // Not in dynamic container mode, so apply active states to the slides themselves
@@ -280,19 +277,21 @@ Slider.prototype = {
         }      
     },
 
-    traverse: function(resize){
-        if(resize === true){
+    traverse: function(noanim){
+        if(noanim === true || !this.settings.animation){
             // if the traverse is happening because of a browser resize, we don't want the animation to happen
-            // it looks bad and is probably distracting to the user. So we apply a class that 'turns off' the 
+            // it looks bad and is probably distracting to the user. So we temporarily apply a class that 'turns off' the 
             // transition animations while we're in a resize event.
             this.container.classList.add('no-anim');
         } else {
             // Otherwise, traverse is running as a result of a user event, in which case we definitely want the animation to happen
+            /// (unless specified as false in this.settings.animation)
             this.container.classList.remove('no-anim');
         }
 
         //this.transition(this.container, 'transition', 'none');
-        this.transition(this.container, 'transform', 'translateX( ' + -(this.state.current*this.state.widthOffset) + 'px)');                
+        this.transition(this.container, 'transform', 'translateX( ' + -(this.state.current*this.state.widthOffset) + 'px)'); 
+        this.markActives(false);               
     },
 
     /// THIS TK
@@ -308,7 +307,6 @@ Slider.prototype = {
             el.style[this.toCamelCase(vendors[i] + prop)] = value;
         }
 
-        this.markActives(false);
     },
 
     toCamelCase: function(str){
@@ -317,8 +315,9 @@ Slider.prototype = {
 
     mergeOpts: function(opts){
         for(var opt in this.settings ){
-            this.settings[opt] = opts[opt] ? opts[opt] : this.settings[opt];
+            this.settings[opt] = opts[opt] === undefined ? this.settings[opt] : opts[opt];
         };
+
     }
 };
 
@@ -327,8 +326,9 @@ Slider.prototype = {
     slidy.init({
         pagination: true,
         dynamic: true,
-        container: '.slides-wrap',
-        autoplay: true
+        container: '.slides-wrap'
+        //autoplay: true // default is false 
+        //animation: false // default is true
         //interval: 5000 // for autoplay true only
     });
 
