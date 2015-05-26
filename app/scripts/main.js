@@ -174,11 +174,22 @@ Slider.prototype = {
         };  
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
-    
-        this.state.current = this.state.current >= groupCount ? groupCount-1 : this.state.current;
+        
+        var slideDelta = this.state.slideTotal - groupCount;
+
+        if(this.state.slideTotal == this.state.current+1){
+            this.state.current = groupCount-1;
+        }
+
+        //this.state.current = this.state.slideTotal == this.state.current+1 ? groupCount-1 : this.state.current+1;
         this.state.slideTotal = groupCount;
+
         this.markActives(false);
         this.recalcSlidePositions(true);
+
+
+        console.log('AFTER state.current: ' + this.state.current);
+        console.log('AFTER slideTotal: ' + this.state.slideTotal);
     },
 
     onResize: function(fn, time) {

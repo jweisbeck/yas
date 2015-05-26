@@ -17,6 +17,7 @@ img {
 
 .slider {
   margin: 0 auto;
+  margin-top: 1em;
   width: 75%;
   overflow: hidden;
   position: relative;
@@ -44,7 +45,7 @@ img {
 /* Set with on .slides-wrap to constrain width of of slide stage */
 .slider .slides-wrap {
   position: relative;
-  margin: 10px auto 0;
+  margin: 0 auto;
   max-width: 100%;
   -webkit-transition: all .75s ease-in-out;
   -moz-transition: all .75s ease-in-out;
