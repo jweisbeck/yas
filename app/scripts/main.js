@@ -2,23 +2,24 @@
 "use strict";
 
 var Slider = function(){
-    this.el = document.querySelector('#slider');
+    this.el = null;
     this.container = null;
-    this.slides = Array.prototype.slice.call(this.el.querySelectorAll('.slide'));
+    this.slides = null;
     this.sets = [];
-    this.next = document.querySelector('#next');
-    this.prev = document.querySelector('#prev');
+    this.next = null;
+    this.prev = null;
     this.pager = null;
     this.state = {
             current: 0,
-            widthOffset: this.el.offsetWidth,
-            slideTotal: this.slides.length
+            widthOffset: 0,
+            slideTotal: 0
         };
     this.settings = {
             pagination: false,
             sliderPadding: 0,
             dynamic: false,
             container: '.slides-wrap',
+            el: '#slider',
             autoplay: false,
             interval: 2000,
             animation: true
@@ -35,7 +36,14 @@ Slider.prototype = {
         // set up user options on settings
         this.mergeOpts(opts);
 
-        this.container = document.querySelector(this.settings.container);
+        // set base options
+        this.el = document.querySelector(this.settings.el);
+        this.container = this.el.querySelector(this.settings.container);
+        this.next = this.el.querySelector('#next');
+        this.prev = this.el.querySelector('#prev');
+        this.slides = Array.prototype.slice.call(this.el.querySelectorAll('.slide'));
+        this.state.widthOffset = this.el.offsetWidth;
+        this.state.slideTotal = this.slides.length;
 
         if(this.settings.pagination){
             this.addPagination();
@@ -323,9 +331,17 @@ Slider.prototype = {
 
 var slidy = new Slider();
 slidy.init({
+    el: "#slider",
     dynamic: true,
     pagination: true
 });
+
+// var slidy2 = new Slider();
+// slidy2.init({
+//     el: "#slider2",
+//     dynamic: true,
+//     pagination: true
+// });
 
 
 
