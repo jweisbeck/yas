@@ -10,7 +10,8 @@
   <body>
   
 
-    <div class="slide-container nojs">
+    <!-- Required. This is the root element on which all subsequent slider calculations depend -->
+    <div id="slider" class="slider nojs">
 
       <!-- nav is optional. Use this base markup. Just delete this markup to remove navigation. -->
       <div class="nav">
@@ -18,25 +19,25 @@
         <button id="next">Next</button>
       </div>
 
-      <!-- #slider is required. It's the root slider element that all selections are based upon -->
-      <div id="slider" class="slider">
+      <!-- Optional wrapper to add spacing and visual styling around slides. -->
+      <div class="decorate-slider">
 
         <!-- .slides-wrap is required, but the selector can be set as an init option. The animation depends on this element -->
         <div class="slides-wrap">
 
           <div class="slide">
-            <!-- If your slider has images, the first slide must always load the image directly fulfill PE qualification requirements -->
+            <!-- If your slider has images, the first slide should always load the image directly fulfill PE qualification requirements -->
             <img src="http://lorempixel.com/450/299/" alt="">
             <p class="caption">This is a caption. A caption it is. A very fine caption it is, indeed!</p>             
           </div>
           <div class="slide">  
-            <div class="js-load" data-src="http://lorempixel.com/450/300/"></div>
-            <!-- <img src="http://lorempixel.com/450/300" alt=""> --> 
+            <!-- <div class="js-load" data-src="http://lorempixel.com/450/300/"></div> -->
+            <img src="http://lorempixel.com/450/300" alt=""> 
             <p class="caption">This is a caption. A caption it is. A very fine caption it is, indeed!</p>          
           </div>
           <div class="slide">
-            <div class="js-load" data-src="http://lorempixel.com/450/301/"></div>
-            <!-- <img src="http://lorempixel.com/450/301/" alt=""> -->
+            <!-- <div class="js-load" data-src="http://lorempixel.com/450/301/"></div> -->
+            <img src="http://lorempixel.com/450/301/" alt="">
           </div>
           <div class="slide">
             <div class="js-load" data-src="http://lorempixel.com/450/302/"></div>
@@ -59,6 +60,9 @@
       </div>
 
     </div>  
+
+
+    
 
       <!-- build:js({app,.tmp}) scripts/main.js -->
       <script src="scripts/main.js"></script>

@@ -17,7 +17,7 @@ var Slider = function(){
     this.settings = {
             pagination: false,
             sliderPadding: 0,
-            dynamic: true,
+            dynamic: false,
             container: '.slides-wrap',
             autoplay: false,
             interval: 2000,
@@ -96,13 +96,15 @@ Slider.prototype = {
             });
 
             this.container.innerHTML = "";
+            var slidesLen = this.slides.length,
+                lazyLoadDelta = (slidesLen - targets.length);
 
-            for (var i = 0; i < this.slides.length; i++) {
-                if(i <= 0 ){
-                    // skip first slide, which should always be referenced in an <img> to fulfill failed PE qualification test
+            for (var i = 0; i < slidesLen; i++) {
+                if(i < lazyLoadDelta ){
+                    // skip slides that aren't set for lazy loading. They should always be referenced in an <img> to fulfill failed PE qualification test
                     frag.appendChild(this.slides[i]);
                 } else {
-                    this.slides[i].replaceChild(imgs[i-1], this.slides[i].querySelector('.js-load')); // load the image into the right position
+                    this.slides[i].replaceChild(imgs[i-lazyLoadDelta], this.slides[i].querySelector('.js-load')); // load the image into the right position
                     frag.appendChild(this.slides[i]);
                 }
             }
@@ -198,14 +200,15 @@ Slider.prototype = {
         this.pager = this.pager || this.el.querySelector('.pagination');
 
         if(this.pager && isRecalculation){
-            this.pager.innerHTML = ""; // using innerHTML bc is also safely removes event listeners, I think :)
+            this.el.removeChild(this.pager);
+            //this.pager.innerHTML = ""; // using innerHTML bc is also safely removes event listeners, I think :)
             this.pager = null;
         }
 
         if(!this.pager){
             this.pager = document.createElement('nav');
             this.pager.classList.add('pagination');
-            this.el.parentNode.insertBefore(this.pager, this.el.nextSibiling);
+            this.el.appendChild(this.pager);
         }
 
             for (var i = 0; i < this.state.slideTotal; i++) {
@@ -317,7 +320,10 @@ Slider.prototype = {
 // Optionally do `module.exports = Slider;` here, for CommonJS compat
 
 var slidy = new Slider();
-slidy.init();
+slidy.init({
+    dynamic: true,
+    pagination: true
+});
 
 
 
