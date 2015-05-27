@@ -155,7 +155,6 @@ Slider.prototype = {
             groupCount = Math.ceil(this.slides.length/slidesPerGroup),
             docFrag = document.createDocumentFragment();
 
-
         this.sets = []; // empty sets before recalculation
 
         //first empty out slides
@@ -180,12 +179,17 @@ Slider.prototype = {
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
 
-        if(this.state.slideTotal == this.state.current+1){
+        // manuvering to the right 'active' slide # on resize is tricky - requires a bit of hairy logic
+        if(this.state.slideTotal == this.state.current+1 ){
+            // if it's the last slide, make the newly re-sized slider active slide the last one
             this.state.current = groupCount-1;
+        } else if(this.state.slideTotal > groupCount && this.state.current !== 0) {
+            this.state.current = (this.state.slideTotal - groupCount) - 1;
         }
 
         this.state.slideTotal = groupCount;
         this.recalcSlidePositions(true);
+
         if(this.settings.pagination){
             this.addPagination(true); // need to re-add pagination with the correct number of slides
         }
@@ -219,20 +223,20 @@ Slider.prototype = {
         if(!this.pager){
             this.pager = document.createElement('nav');
             this.pager.classList.add('pagination');
-            this.el.appendChild(this.pager);
         }
 
             for (var i = 0; i < this.state.slideTotal; i++) {
-
                 var btn = document.createElement('button');
                 btn.setAttribute('data-page', i);
                 btn.classList.add('pagination__btn');
                 var txt = document.createTextNode(i+1);
                 btn.appendChild(txt);
-                btn.addEventListener('click', self.goToSlide.bind(self), false);
+                this.addNavHandlers(btn, this.goToSlide);
+                //btn.addEventListener('click', self.goToSlide.bind(self), false);
                 self.pager.appendChild(btn);                
             };
 
+            this.el.appendChild(this.pager);
             this.state.pagination = Array.prototype.slice.call(this.pager.querySelectorAll('.pagination__btn'));
 
         if(isRecalculation) this.markActives();
@@ -273,12 +277,20 @@ Slider.prototype = {
 
         // remove any active class if it exists and apply .active to the current slide element
         this.container.querySelector('.active') ? this.container.querySelector('.active').classList.remove('active') : null;
-        if(this.state.pagination[this.state.current]) elGroup[this.state.current].classList.add('active');
+        if(this.state.pagination[this.state.current]) {
+            elGroup[this.state.current].classList.add('active');
+        } else {
+            elGroup[0].classList.add('active');
+        }
 
         // update the paginator's active element
         if(this.settings.pagination){
             this.pager.querySelector('.active') ? this.pager.querySelector('.active').classList.remove('active') : null;
-            if(this.state.pagination[this.state.current]) this.state.pagination[this.state.current].classList.add('active');
+            if(this.state.pagination[this.state.current]) {
+              this.state.pagination[this.state.current].classList.add('active');  
+          } else {
+            this.state.pagination[0].classList.add('active');
+          }
         }      
     },
 
