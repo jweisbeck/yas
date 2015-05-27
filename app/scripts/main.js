@@ -98,11 +98,11 @@ Slider.prototype = {
             this.container.innerHTML = "";
 
             for (var i = 0; i < this.slides.length; i++) {
-                if(i == 0 ){
+                if(i <= 0 ){
                     // skip first slide, which should always be referenced in an <img> to fulfill failed PE qualification test
                     frag.appendChild(this.slides[i]);
                 } else {
-                    this.slides[i].appendChild(imgs[i-1]);
+                    this.slides[i].replaceChild(imgs[i-1], this.slides[i].querySelector('.js-load')); // load the image into the right position
                     frag.appendChild(this.slides[i]);
                 }
             }
