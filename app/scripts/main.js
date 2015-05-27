@@ -12,7 +12,8 @@ var Slider = function(){
     this.state = {
             current: 0,
             widthOffset: 0,
-            slideTotal: 0
+            slideTotal: 0,
+            pagination: []
         };
     this.settings = {
             pagination: false,
@@ -211,7 +212,7 @@ Slider.prototype = {
 
         if(this.pager && isRecalculation){
             this.el.removeChild(this.pager);
-            //this.pager.innerHTML = ""; // using innerHTML bc is also safely removes event listeners, I think :)
+            this.pager.innerHTML = ""; // using innerHTML bc is also safely removes event listeners, I think :)
             this.pager = null;
         }
 
@@ -241,14 +242,14 @@ Slider.prototype = {
         var target = e.target, 
             slide = target.getAttribute('data-page');
 
-        this.state.current = this.state.current >= this.state.slideTotal ? this.state.current = 0 : +slide;
+        this.state.current = this.state.current >= this.state.slideTotal ? 0 : +slide;
 
         this.traverse();
     },
 
     goToNext: function(){
         this.state.current++;
-        this.state.current = this.state.current >= this.state.slideTotal ? this.state.current = 0 : this.state.current;
+        this.state.current = this.state.current >= this.state.slideTotal ?  0 : this.state.current;
         this.traverse();
     },
 
@@ -272,12 +273,12 @@ Slider.prototype = {
 
         // remove any active class if it exists and apply .active to the current slide element
         this.container.querySelector('.active') ? this.container.querySelector('.active').classList.remove('active') : null;
-        elGroup[this.state.current].classList.add('active');
+        if(this.state.pagination[this.state.current]) elGroup[this.state.current].classList.add('active');
 
         // update the paginator's active element
-        if(this.state.pagination){
+        if(this.settings.pagination){
             this.pager.querySelector('.active') ? this.pager.querySelector('.active').classList.remove('active') : null;
-            this.state.pagination[this.state.current].classList.add('active');
+            if(this.state.pagination[this.state.current]) this.state.pagination[this.state.current].classList.add('active');
         }      
     },
 
