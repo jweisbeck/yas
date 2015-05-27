@@ -29,6 +29,8 @@ var Slider = function(){
 Slider.prototype = {
 
     init: function(opts) {
+
+        if (!document.querySelector || !('classList' in document.body)) return false;
         
         // set up user options on settings
         this.mergeOpts(opts);
