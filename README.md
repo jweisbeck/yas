@@ -10,7 +10,7 @@ Here's how you start the slider with JavaScript:
 
 ```
 var slidy = new Slider();
-slidy.init(); // will start the slider with default options
+slidy.init({el: '#slider'}); // will start the slider with default options
 
 // Here's all the optional settings you can pass on init()
 slidy.init({
@@ -26,9 +26,9 @@ slidy.init({
 
 ###Options
 
-* El: This is the only reuqired argument. It must refer to the root html element that wraps the entire slider. 
+* El: This is the only required argument. It must refer to the root html element that wraps the entire slider. 
 * Pagination: Adds numbered pagination to the slider. The slider automatically keeps track of the current slide, appending the class `active` to the current slide
-* Dynamic: Helps with showing multiple slides in one view. When the browser is re-sized, the slider will automatically recalculate the number of viewable slides based on the CSS controlling the slides. See the rules for `.slide` and `.slag` in the accompanying main.css stylesheet. You'll see they have media query rules controlling their width in percent. When the media query fires as a browser changes size, the slider will notice when the slides have changed width have changed and recalculate the slideshow to show the correct number of slides at once. It's easier to see this behavior by running the sample and making the `dynamic` option `true`.
+* Dynamic: Helps with showing multiple slides in one view. When the browser is re-sized, the slider will automatically recalculate the number of viewable slides based on the CSS controlling the slides. See the rules for `.slide` and `.slag` in the accompanying main.css stylesheet. You'll see they have media query rules controlling their width in percent. When the media query fires as viewport changes size, the slider will notice and recalculate the slides to show the correct number of  at once. It's easier to see this behavior by running the sample and making the `dynamic` option `true`.
 * Container: Set the viewport wrapper element class name around the slides
 * Autoplay: Does what it says
 * Interval: sets the slide time interval when `autoplay` is set to `true`

@@ -54,7 +54,7 @@ Slider.prototype = {
             this.autoplay();
         }
         
-        this.loadImages(this.configureSlides.bind(this));
+        this.loadImages(this.configureSlides);
 
         if(this.next) this.addNavHandlers(this.next, this.goToNext);
         if(this.prev) this.addNavHandlers(this.prev, this.goToPrev);
@@ -62,8 +62,7 @@ Slider.prototype = {
         this.container.addEventListener('transitionend', this.updateAfterTrans); // (TK - need to add vendor API variations). Option fire callback after each transition
 
         // if this is running, js obviously works, so remove no-js controls and swap in 2 through n slide images if present
-        var nojs = document.querySelector('.nojs');
-        nojs.classList.remove('nojs');
+        this.el.classList.remove('nojs');
     },
 
     autoplay: function() {
@@ -84,7 +83,7 @@ Slider.prototype = {
             });
 
             this.calculateDynamicContainers();
-            this.onResize(this.calculateDynamicContainers);
+            this.onResize(this.calculateDynamicContainers.bind(this));
         } else {
             this.onResize(this.recalcSlidePositions);
         }
@@ -123,17 +122,17 @@ Slider.prototype = {
             this.container.appendChild(frag);
         }
 
-        fn();
+        fn.call(this);
     },
 
     recalcSlidePositions: function(){
         // on browser resize, we need to recalculate the slide's left position so they are correctly spaced amongst themselves,
         // or weird margin and overlapping will begin to occur. This ensures the slides stay 'synced' to the size of their parent 
         // container, which SHOULD be a percentage of viewport width bc it's a responsive design, right?
-        var self = this;
+        var self = this, elGroup;
+
         this.state.widthOffset = this.el.offsetWidth; // set width for a single slide or single dynamic container       
 
-        var elGroup;
         if(this.settings.dynamic){
             elGroup = this.sets;
         } else {
@@ -149,6 +148,7 @@ Slider.prototype = {
     },
 
     calculateDynamicContainers: function(){
+
         var slideWidth = this.slides[0].offsetWidth,
             containerWidth = this.el.offsetWidth,
             slidesPerGroup = Math.floor(containerWidth/slideWidth),
@@ -173,22 +173,12 @@ Slider.prototype = {
             });
 
             this.sets.push(groupEl);
-
             docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page re-paints
         };  
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
 
-
         this.state.slideTotal = groupCount;
-
-        // manuvering to the right 'active' slide # on resize is tricky - requires a bit of hairy logic
-        // if(this.state.slideTotal == this.state.current+1 ){
-        //     // if it's the last slide, make the newly re-sized slider active slide the last one
-        //     this.state.current = groupCount-1;
-        // } else if(this.state.slideTotal > groupCount && this.state.current !== 0) {
-        //     this.state.current = (this.state.slideTotal - groupCount) - 1;
-        // }
 
         if(this.state.current > this.state.slideTotal-1) {
             this.state.current = this.state.slideTotal-1;
@@ -204,11 +194,9 @@ Slider.prototype = {
     onResize: function(fn, time) {
         var timeout, self = this;
         window.onresize = function(){
-            clearTimeout(timeout);
-            timeout = setTimeout( function(){
-                fn.call(self, true);
-            }, time || 150);
-        }
+            clearTimeout(self.timeout);
+            self.timeout = setTimeout(fn, 150);    
+        };
     },
 
     addNavHandlers: function(el, fn) {
@@ -354,14 +342,6 @@ slidy.init({
     dynamic: true,
     pagination: true
 });
-
-// var slidy2 = new Slider();
-// slidy2.init({
-//     el: "#slider2",
-//     dynamic: true,
-//     pagination: true
-// });
-
 
 
 
