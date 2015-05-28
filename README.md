@@ -38,14 +38,12 @@ slidy.init({
 This project covers broswsers that don't support ES5 features like the classList API. Those browsers get shown the first item in the carousel as a static slide sans any carousel functionality (that's actually the default state of the slider with the full version enhanced from the basic state). We could say this is "component Progressive Enhancement", where the slider handles its own PE workflow and doesn't depend on a global PE workflow, such as the common ".no-js" class on the <html> element.
 
 ####Progressive Enhancement workflow
-TK
+_TK ..._
 
 
 
 
 ##TK
-
-* Multiple sliders per page
 * Feature: Provide callback after slide is done animating. Useful for loading things like video.
 * Feature: swipe gestures for touch devices, maybe?
 

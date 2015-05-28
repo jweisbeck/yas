@@ -191,11 +191,19 @@ Slider.prototype = {
         }
     },
 
-    onResize: function(fn, time) {
-        var timeout, self = this;
+    onResize: function(fn) {
+        var timeout, 
+            self = this, 
+            oldResize = window.onresize;
+
         window.onresize = function(){
             clearTimeout(self.timeout);
-            self.timeout = setTimeout(fn, 150);    
+            self.timeout = setTimeout(fn, 50); 
+            
+            if(typeof oldResize === 'function'){
+                oldResize();
+            }
+   
         };
     },
 
@@ -339,6 +347,13 @@ Slider.prototype = {
 var slidy = new Slider();
 slidy.init({
     el: "#slider",
+    dynamic: true,
+    pagination: true
+});
+
+var slidy2 = new Slider();
+slidy2.init({
+    el: "#slider2",
     dynamic: true,
     pagination: true
 });
