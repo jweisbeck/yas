@@ -1,8 +1,8 @@
 ##Don't want to worry about non-modern browsers? Don't need oodles of features??
 
-This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery (uses ES5 APIs) and it only has two main features. In my experience building sliders, the two most important features to making clients happy: pagination and dynamic container calculation. This slider has those features, and nothing else (it's responsive, too, but that's a baseline for everything nowadays, not a feature).
+This is Yet Another Slider (YAS). BUT, it is a bit special: it doesn't need jQuery (uses ES5 APIs) and it only has a couple features, as noted in the options below. (it's responsive, too, but that's a baseline for everything nowadays, not a feature). Since this project makes use of newer APIs, it will only work in browsers that support `querySelector` and `classList`, notably excluding IE9 and below. But old browsers aren't completely left out. See the section on progressive enhancement below.
 
-This script is less than 2kb minified and gzipped. There is no library dependency, so there isn't the hidden cost of also loading a library like jQuery.
+This script is less than 2kb minified and gzipped. As mentioned, there is no library dependency, so there isn't the hidden cost of also loading a library like jQuery.
 
 ###How to Use
 Use the provided markup in `index.html` as a starting point for your slider. 
