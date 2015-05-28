@@ -14,9 +14,10 @@ slidy.init(); // will start the slider with default options
 
 // Here's all the optional settings you can pass on init()
 slidy.init({
+	el: '#slider', // REQUIRED. class or id selector of the root slider element
     pagination: false, // default is true
     dynamic: true, // default is false
-    container: '.slides-wrap', // default is .slides-wrap
+    container: '.slides-wrap', // default is .slides-wrap, but you can change
     autoplay: true // default is false 
     animation: false // default is true
     interval: 5000 // for autoplay true only
@@ -25,6 +26,7 @@ slidy.init({
 
 ###Options
 
+* El: This is the only reuqired argument. It must refer to the root html element that wraps the entire slider. 
 * Pagination: Adds numbered pagination to the slider. The slider automatically keeps track of the current slide, appending the class `active` to the current slide
 * Dynamic: Helps with showing multiple slides in one view. When the browser is re-sized, the slider will automatically recalculate the number of viewable slides based on the CSS controlling the slides. See the rules for `.slide` and `.slag` in the accompanying main.css stylesheet. You'll see they have media query rules controlling their width in percent. When the media query fires as a browser changes size, the slider will notice when the slides have changed width have changed and recalculate the slideshow to show the correct number of slides at once. It's easier to see this behavior by running the sample and making the `dynamic` option `true`.
 * Container: Set the viewport wrapper element class name around the slides
