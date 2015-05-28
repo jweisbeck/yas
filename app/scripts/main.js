@@ -179,15 +179,21 @@ Slider.prototype = {
 
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
 
-        // manuvering to the right 'active' slide # on resize is tricky - requires a bit of hairy logic
-        if(this.state.slideTotal == this.state.current+1 ){
-            // if it's the last slide, make the newly re-sized slider active slide the last one
-            this.state.current = groupCount-1;
-        } else if(this.state.slideTotal > groupCount && this.state.current !== 0) {
-            this.state.current = (this.state.slideTotal - groupCount) - 1;
-        }
 
         this.state.slideTotal = groupCount;
+
+        // manuvering to the right 'active' slide # on resize is tricky - requires a bit of hairy logic
+        // if(this.state.slideTotal == this.state.current+1 ){
+        //     // if it's the last slide, make the newly re-sized slider active slide the last one
+        //     this.state.current = groupCount-1;
+        // } else if(this.state.slideTotal > groupCount && this.state.current !== 0) {
+        //     this.state.current = (this.state.slideTotal - groupCount) - 1;
+        // }
+
+        if(this.state.current > this.state.slideTotal-1) {
+            this.state.current = this.state.slideTotal-1;
+        } 
+
         this.recalcSlidePositions(true);
 
         if(this.settings.pagination){
