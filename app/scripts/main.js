@@ -54,7 +54,7 @@ Slider.prototype = {
             this.autoplay();
         }
         
-        this.loadImages(this.configureSlides);
+       this.loadImages(this.configureSlides);
 
         if(this.next) this.addNavHandlers(this.next, this.goToNext);
         if(this.prev) this.addNavHandlers(this.prev, this.goToPrev);
@@ -114,11 +114,12 @@ Slider.prototype = {
                     // skip slides that aren't set for lazy loading. They should always be referenced in an <img> to fulfill failed PE qualification test
                     frag.appendChild(this.slides[i]);
                 } else {
-                    this.slides[i].replaceChild(imgs[i-lazyLoadDelta], this.slides[i].querySelector('.js-load')); // load the image into the right position
+                    targets[i-lazyLoadDelta].appendChild(imgs[i-lazyLoadDelta]);
                     frag.appendChild(this.slides[i]);
+
                 }
             }
-           
+ 
             this.container.appendChild(frag);
         }
 
@@ -157,9 +158,6 @@ Slider.prototype = {
 
         this.sets = []; // empty sets before recalculation
 
-        //first empty out slides
-        this.container.innerHTML = "";
-
         for (var i = 0; i < groupCount; i++) {
             var groupEl = document.createElement('div');
             groupEl.classList.add('slide-group');
@@ -169,6 +167,7 @@ Slider.prototype = {
                 slideChunk = this.slides.slice(start, end );
 
             slideChunk.forEach(function(slide) {
+
                 groupEl.appendChild(slide);
             });
 
@@ -176,6 +175,7 @@ Slider.prototype = {
             docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page re-paints
         };  
 
+        this.container.innerHTML = "";
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints
 
         this.state.slideTotal = groupCount;
@@ -199,7 +199,7 @@ Slider.prototype = {
         window.onresize = function(){
             clearTimeout(self.timeout);
             self.timeout = setTimeout(fn, 50); 
-            
+
             if(typeof oldResize === 'function'){
                 oldResize();
             }
@@ -351,12 +351,12 @@ slidy.init({
     pagination: true
 });
 
-var slidy2 = new Slider();
-slidy2.init({
-    el: "#slider2",
-    dynamic: true,
-    pagination: true
-});
+// var slidy2 = new Slider();
+// slidy2.init({
+//     el: "#slider2",
+//     dynamic: true,
+//     pagination: true
+// });
 
 
 
