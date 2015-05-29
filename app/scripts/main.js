@@ -105,7 +105,6 @@ Slider.prototype = {
                 imgs.push(img);
             });
 
-            this.container.innerHTML = "";
             var slidesLen = this.slides.length,
                 lazyLoadDelta = (slidesLen - targets.length);
 
@@ -119,7 +118,7 @@ Slider.prototype = {
 
                 }
             }
- 
+            this.container.innerHTML = "";
             this.container.appendChild(frag);
         }
 
@@ -173,7 +172,7 @@ Slider.prototype = {
 
             this.sets.push(groupEl);
             docFrag.appendChild(groupEl); // append to docFrag first to avoid multiple page re-paints
-        };  
+        }; 
 
         this.container.innerHTML = "";
         this.container.appendChild(docFrag); // append all new slide groups in one go to avoie multiple browser re-paints

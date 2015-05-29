@@ -15,7 +15,7 @@ slidy.init({el: '#slider'}); // will start the slider with default options
 // Here's all the optional settings you can pass on init()
 slidy.init({
 	el: '#slider', // REQUIRED. class or id selector of the root slider element
-    pagination: false, // default is true
+    pagination: true, // default is false
     dynamic: true, // default is false
     container: '.slides-wrap', // default is .slides-wrap, but you can change
     autoplay: true // default is false 
